@@ -1,0 +1,68 @@
+{
+	"name": "DCLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "DCLE.csv",
+				"fileSystem": "o2craw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Entry No_",
+				"type": "String"
+			},
+			{
+				"name": "Cust_ Ledger Entry No_",
+				"type": "String"
+			},
+			{
+				"name": "Entry Type",
+				"type": "String"
+			},
+			{
+				"name": "Posting Date",
+				"type": "String"
+			},
+			{
+				"name": "Document No_",
+				"type": "String"
+			},
+			{
+				"name": "Amount (LCY)",
+				"type": "String"
+			},
+			{
+				"name": "User ID",
+				"type": "String"
+			},
+			{
+				"name": "Source Code",
+				"type": "String"
+			},
+			{
+				"name": "Transaction No_",
+				"type": "String"
+			},
+			{
+				"name": "Debit Amount",
+				"type": "String"
+			},
+			{
+				"name": "Credit Amount",
+				"type": "String"
+			}
+		]
+	}
+}

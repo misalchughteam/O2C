@@ -1,0 +1,68 @@
+{
+	"name": "CLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "CLE.csv",
+				"fileSystem": "o2craw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Entry No_",
+				"type": "String"
+			},
+			{
+				"name": "Customer No_",
+				"type": "String"
+			},
+			{
+				"name": "Posting Date",
+				"type": "String"
+			},
+			{
+				"name": "Document Type",
+				"type": "String"
+			},
+			{
+				"name": "Document No_",
+				"type": "String"
+			},
+			{
+				"name": "Currency Code",
+				"type": "String"
+			},
+			{
+				"name": "Customer Posting Group",
+				"type": "String"
+			},
+			{
+				"name": "Salesperson Code",
+				"type": "String"
+			},
+			{
+				"name": "Document Date",
+				"type": "String"
+			},
+			{
+				"name": "Closed by Entry No_",
+				"type": "String"
+			},
+			{
+				"name": "Closed by Amount",
+				"type": "String"
+			}
+		]
+	}
+}

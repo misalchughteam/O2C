@@ -1,0 +1,108 @@
+{
+	"name": "Sales_order_Line",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Sales Line.csv",
+				"fileSystem": "o2craw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Document Type",
+				"type": "String"
+			},
+			{
+				"name": "Document No_",
+				"type": "String"
+			},
+			{
+				"name": "Line No_",
+				"type": "String"
+			},
+			{
+				"name": "Type",
+				"type": "String"
+			},
+			{
+				"name": "No_",
+				"type": "String"
+			},
+			{
+				"name": "Location Code",
+				"type": "String"
+			},
+			{
+				"name": "Quantity",
+				"type": "String"
+			},
+			{
+				"name": "Outstanding Quantity",
+				"type": "String"
+			},
+			{
+				"name": "Qty_ to Invoice",
+				"type": "String"
+			},
+			{
+				"name": "Qty_ to Ship",
+				"type": "String"
+			},
+			{
+				"name": "Unit Price",
+				"type": "String"
+			},
+			{
+				"name": "Unit Cost (LCY)",
+				"type": "String"
+			},
+			{
+				"name": "Line Discount _",
+				"type": "String"
+			},
+			{
+				"name": "Line Discount Amount",
+				"type": "String"
+			},
+			{
+				"name": "Amount",
+				"type": "String"
+			},
+			{
+				"name": "Profit _",
+				"type": "String"
+			},
+			{
+				"name": "Outstanding Amount (LCY)",
+				"type": "String"
+			},
+			{
+				"name": "Shipped Not Invoiced (LCY)",
+				"type": "String"
+			},
+			{
+				"name": "Line Amount",
+				"type": "String"
+			},
+			{
+				"name": "Planned Delivery Date",
+				"type": "String"
+			},
+			{
+				"name": "Planned Shipment Date",
+				"type": "String"
+			}
+		]
+	}
+}

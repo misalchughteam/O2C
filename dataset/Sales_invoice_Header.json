@@ -1,0 +1,92 @@
+{
+	"name": "Sales_invoice_Header",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Sale Invoice Header.csv",
+				"fileSystem": "o2craw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "No_",
+				"type": "String"
+			},
+			{
+				"name": "Sell-to Customer No_",
+				"type": "String"
+			},
+			{
+				"name": "Ship-to Name",
+				"type": "String"
+			},
+			{
+				"name": "Ship-to Address",
+				"type": "String"
+			},
+			{
+				"name": "Ship-to City",
+				"type": "String"
+			},
+			{
+				"name": "Order Date",
+				"type": "String"
+			},
+			{
+				"name": "Posting Date",
+				"type": "String"
+			},
+			{
+				"name": "Shipment Date",
+				"type": "String"
+			},
+			{
+				"name": "Payment Terms Code",
+				"type": "String"
+			},
+			{
+				"name": "Location Code",
+				"type": "String"
+			},
+			{
+				"name": "Currency Code",
+				"type": "String"
+			},
+			{
+				"name": "Currency Factor",
+				"type": "String"
+			},
+			{
+				"name": "Order No_",
+				"type": "String"
+			},
+			{
+				"name": "Sell-to Customer Name",
+				"type": "String"
+			},
+			{
+				"name": "Sell-to Address",
+				"type": "String"
+			},
+			{
+				"name": "Sell-to City",
+				"type": "String"
+			},
+			{
+				"name": "Sell-to Post Code",
+				"type": "String"
+			}
+		]
+	}
+}
