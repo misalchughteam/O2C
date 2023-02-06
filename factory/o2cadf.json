@@ -1,0 +1,9 @@
+{
+	"name": "o2cadf",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "93462e06-1770-4cc5-bcdb-66d3c973cb52",
+		"tenantId": "90d12e33-ad5e-4e82-8b5e-82bff0658ae0"
+	}
+}
