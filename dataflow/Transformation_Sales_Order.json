@@ -1,0 +1,136 @@
+{
+	"name": "Transformation_Sales_Order",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Sales_order_Line",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Sales_Order_Header",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Document Type} as short,",
+				"          {Document No_} as integer,",
+				"          {Line No_} as integer,",
+				"          Type as integer,",
+				"          No_ as string,",
+				"          {Location Code} as string,",
+				"          Quantity as short,",
+				"          {Outstanding Quantity} as short,",
+				"          {Qty_ to Invoice} as integer,",
+				"          {Qty_ to Ship} as short,",
+				"          {Unit Price} as double,",
+				"          {Unit Cost (LCY)} as double,",
+				"          {Line Discount _} as short,",
+				"          {Line Discount Amount} as double,",
+				"          Amount as double,",
+				"          {Profit _} as double,",
+				"          {Outstanding Amount (LCY)} as double,",
+				"          {Shipped Not Invoiced (LCY)} as double,",
+				"          {Line Amount} as double,",
+				"          {Planned Delivery Date} as string,",
+				"          {Planned Shipment Date} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          {Document Type} as string,",
+				"          No_ as string,",
+				"          {Sell-to Customer No_} as string,",
+				"          {Ship-to Name} as string,",
+				"          {Ship-to City} as string,",
+				"          {Order Date} as string,",
+				"          {Posting Date} as string,",
+				"          {Shipment Date} as string,",
+				"          {Payment Terms Code} as string,",
+				"          Ship as string,",
+				"          Invoice as string,",
+				"          {Requested Delivery Date} as string,",
+				"          {Promised Delivery Date} as string,",
+				"          State as string,",
+				"          {Sell-to Customer Name} as string,",
+				"          {Currency Factor} as string,",
+				"          {Salesperson Code} as string,",
+				"          {Responsibility Center} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source1 select(mapColumn(",
+				"          Document_No = {Document No_},",
+				"          Line_No = {Line No_},",
+				"          Type,",
+				"          No = No_,",
+				"          {Location Code},",
+				"          Quantity,",
+				"          Outstanding_Quantity = {Outstanding Quantity},",
+				"          Qty_To_Invoice = {Qty_ to Invoice},",
+				"          Qty_To_Ship = {Qty_ to Ship},",
+				"          Unit_Price = {Unit Price},",
+				"          Unit_Cost_LCY = {Unit Cost (LCY)},",
+				"          {Line_Discount_%} = {Line Discount _},",
+				"          Line_Discount_Amount = {Line Discount Amount},",
+				"          Sales_Amount = Amount,",
+				"          {Profit_%} = {Profit _},",
+				"          Outstanding_Amount_LCY = {Outstanding Amount (LCY)},",
+				"          Shipped_Not_Invoiced_LCY = {Shipped Not Invoiced (LCY)},",
+				"          Line_Amount = {Line Amount}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 derive(Link_Item = iif(Type==2,No,toString(Type)) \r",
+				",",
+				"          Cost_Amount = (Qty_To_Invoice * Unit_Cost_LCY) ,",
+				"          Open_Order_Qunatity = iif(Type==2,Qty_To_Invoice,Type) ) ~> derivedColumn1",
+				"source2 select(mapColumn(",
+				"          Document_Type = {Document Type},",
+				"          Document_No = No_,",
+				"          Sell_To_Customer_No = {Sell-to Customer No_},",
+				"          {Order Date},",
+				"          {Posting Date},",
+				"          {Shipment Date},",
+				"          Payment_Terms_Code = {Payment Terms Code},",
+				"          Ship_Info = Ship,",
+				"          Invoice_Info = Invoice,",
+				"          Promised_Delivery_Date = {Promised Delivery Date},",
+				"          Currency_Factor = {Currency Factor},",
+				"          Salesperson_Code = {Salesperson Code},",
+				"          Responsibility_Center = {Responsibility Center}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 derive(Flag = 'Sales_Order',",
+				"          Order_Date = toDate(toString(toDate({Order Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd')),",
+				"          Posting_Date = toDate(toString(toDate({Posting Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd'))) ~> derivedColumn2"
+			]
+		}
+	}
+}
