@@ -32,9 +32,6 @@
 				},
 				{
 					"name": "derivedColumn2"
-				},
-				{
-					"name": "split1"
 				}
 			],
 			"scriptLines": [
@@ -129,13 +126,9 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
-				"split1@ErrorDate derive(Flag = 'Sales_Order',",
+				"select2 derive(Flag = 'Sales_Order',",
 				"          Posting_Date = toDate(toString(toDate({Posting Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd')),",
-				"          column1 = iifNull(toString({Order Date}),toString({Order Date},'yyyy-MM-dd'))) ~> derivedColumn2",
-				"select2 split(isNull(toDate({Order Date},'yyyy-MM-dd'))\r",
-				"\r",
-				",",
-				"     disjoint: false) ~> split1@(ErrorDate, GoodDate)"
+				"          column1 = iifNull(toString({Order Date}),toString({Order Date},'yyyy-MM-dd'))) ~> derivedColumn2"
 			]
 		}
 	}
