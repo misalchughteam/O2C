@@ -70,7 +70,7 @@
 				"          {Sell-to Customer No_} as string,",
 				"          {Ship-to Name} as string,",
 				"          {Ship-to City} as string,",
-				"          {Order Date} as date,",
+				"          {Order Date} as string,",
 				"          {Posting Date} as string,",
 				"          {Shipment Date} as string,",
 				"          {Payment Terms Code} as string,",
@@ -132,10 +132,10 @@
 				"split1@ErrorDate derive(Flag = 'Sales_Order',",
 				"          Posting_Date = toDate(toString(toDate({Posting Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd')),",
 				"          column1 = iifNull(toString({Order Date}),toString({Order Date},'yyyy-MM-dd'))) ~> derivedColumn2",
-				"select2 split(isNull(toDate({Order Date}))\r",
+				"select2 split(isNull(toDate({Order Date},'yyyy-MM-dd'))\r",
 				"\r",
 				",",
-				"     disjoint: false) ~> split1@(ErrorDate, )"
+				"     disjoint: false) ~> split1@(ErrorDate, GoodDate)"
 			]
 		}
 	}
