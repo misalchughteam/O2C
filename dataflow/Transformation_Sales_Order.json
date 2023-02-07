@@ -67,7 +67,7 @@
 				"          {Sell-to Customer No_} as string,",
 				"          {Ship-to Name} as string,",
 				"          {Ship-to City} as string,",
-				"          {Order Date} as string,",
+				"          {Order Date} as date,",
 				"          {Posting Date} as string,",
 				"          {Shipment Date} as string,",
 				"          {Payment Terms Code} as string,",
@@ -106,10 +106,9 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 derive(Link_Item = iif(Type==2,No,toString(Type)) \r",
-				",",
-				"          Cost_Amount = (Qty_To_Invoice * Unit_Cost_LCY) ,",
-				"          Open_Order_Qunatity = iif(Type==2,Qty_To_Invoice,Type) ) ~> derivedColumn1",
+				"select1 derive(Link_Item = iif(Type==2,No,toString(Type)),",
+				"          Cost_Amount = (Qty_To_Invoice * Unit_Cost_LCY),",
+				"          Open_Order_Qunatity = iif(Type==2,Qty_To_Invoice,Type)) ~> derivedColumn1",
 				"source2 select(mapColumn(",
 				"          Document_Type = {Document Type},",
 				"          Document_No = No_,",
@@ -128,8 +127,10 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
 				"select2 derive(Flag = 'Sales_Order',",
-				"          Order_Date = toDate(toString(toDate({Order Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd')),",
-				"          Posting_Date = toDate(toString(toDate({Posting Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd'))) ~> derivedColumn2"
+				"          Posting_Date = toDate(toString(toDate({Posting Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd')),",
+				"          column1 = iifNull(toString({Order Date}),toString({Order Date},'yyyy-MM-dd'))\r",
+				"\r",
+				") ~> derivedColumn2"
 			]
 		}
 	}
