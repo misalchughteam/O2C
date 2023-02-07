@@ -67,7 +67,7 @@
 				"          {Sell-to Customer No_} as string,",
 				"          {Ship-to Name} as string,",
 				"          {Ship-to City} as string,",
-				"          {Order Date} as date,",
+				"          {Order Date} as string,",
 				"          {Posting Date} as string,",
 				"          {Shipment Date} as string,",
 				"          {Payment Terms Code} as string,",
@@ -127,12 +127,10 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select2",
 				"select2 derive(Flag = 'Sales_Order',",
-				"          Posting_Date = toDate(toString({Posting Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd')\r",
-				",",
-				"          column1 = iifNull(toString({Order Date}),toString({Order Date},'yyyy-MM-dd'),toString({Order Date},'yyyy-MM-dd'))\r",
-				"\r",
-				",",
-				"          column2 = toDate(iifNull({Order Date},toString({Order Date},'yyyy-MM-dd'),toString({Order Date},'yyyy-MM-dd')),'yyyy-MM-dd')) ~> derivedColumn2"
+				"          Posting_Date = toDate(toString({Posting Date}, 'yyyy-MM-dd'), 'yyyy-MM-dd'),",
+				"          column1 = iifNull(toString({Order Date}),toString({Order Date},'yyyy-MM-dd'),toString({Order Date},'yyyy-MM-dd')),",
+				"          column2 = toDate(iifNull({Order Date},toString({Order Date},'yyyy-MM-dd'),toString({Order Date},'yyyy-MM-dd')),'yyyy-MM-dd'),",
+				"          column4 = iifNull(toDate({Order Date},'yyyy-MM-dd'), toDate({Order Date},'yyyy-MM-dd'))) ~> derivedColumn2"
 			]
 		}
 	}
