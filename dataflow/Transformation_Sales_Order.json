@@ -22,16 +22,22 @@
 			"sinks": [],
 			"transformations": [
 				{
+					"name": "Saleslineselect"
+				},
+				{
+					"name": "SalesLinederived"
+				},
+				{
+					"name": "Salesheaderselect"
+				},
+				{
+					"name": "Salesheaderderived"
+				},
+				{
+					"name": "join1"
+				},
+				{
 					"name": "select1"
-				},
-				{
-					"name": "derivedColumn1"
-				},
-				{
-					"name": "select2"
-				},
-				{
-					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -71,8 +77,8 @@
 				"          {Posting Date} as date,",
 				"          {Shipment Date} as date,",
 				"          {Payment Terms Code} as string,",
-				"          Ship as boolean,",
-				"          Invoice as boolean,",
+				"          Ship as integer,",
+				"          Invoice as integer,",
 				"          {Requested Delivery Date} as string,",
 				"          {Promised Delivery Date} as date,",
 				"          State as string,",
@@ -105,10 +111,10 @@
 				"          Line_Amount = {Line Amount}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 derive(Link_Item = iif(Type==2,No,toString(Type)),",
+				"     skipDuplicateMapOutputs: true) ~> Saleslineselect",
+				"Saleslineselect derive(Link_Item = iif(Type==2,No,toString(Type)),",
 				"          Cost_Amount = (Qty_To_Invoice * Unit_Cost_LCY),",
-				"          Open_Order_Qunatity = iif(Type==2,Qty_To_Invoice,Type)) ~> derivedColumn1",
+				"          Open_Order_Qunatity = iif(Type==2,Qty_To_Invoice,Type)) ~> SalesLinederived",
 				"source2 select(mapColumn(",
 				"          Document_Type = {Document Type},",
 				"          Document_No = No_,",
@@ -125,8 +131,55 @@
 				"          Responsibility_Center = {Responsibility Center}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2",
-				"select2 derive(Flag = 'Sales_Order') ~> derivedColumn2"
+				"     skipDuplicateMapOutputs: true) ~> Salesheaderselect",
+				"Salesheaderselect derive(Flag = 'Sales_Order',",
+				"          Shipment_Flag = toString(iif(toDate(toString(Shipment_Date))>toDate(toString(Promised_Delivery_Date)),'Late',\r",
+				"toString(iif(toDate(toString(Shipment_Date))<toDate(toString(Promised_Delivery_Date)),'Early',\r",
+				"toString(iif(toDate(toString(Shipment_Date))==toDate(toString(Promised_Delivery_Date)),'Ontime'))))))) ~> Salesheaderderived",
+				"SalesLinederived, Salesheaderderived join(Saleslineselect@Document_No == Salesheaderselect@Document_No,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          Document_No = Saleslineselect@Document_No,",
+				"          Line_No,",
+				"          Type,",
+				"          No,",
+				"          {Location Code},",
+				"          Quantity,",
+				"          Outstanding_Quantity,",
+				"          Qty_To_Invoice,",
+				"          Qty_To_Ship,",
+				"          Unit_Price,",
+				"          Unit_Cost_LCY,",
+				"          {Line_Discount_%},",
+				"          Line_Discount_Amount,",
+				"          Sales_Amount,",
+				"          {Profit_%},",
+				"          Outstanding_Amount_LCY,",
+				"          Shipped_Not_Invoiced_LCY,",
+				"          Line_Amount,",
+				"          Link_Item,",
+				"          Cost_Amount,",
+				"          Open_Order_Qunatity,",
+				"          Document_Type,",
+				"          Sell_To_Customer_No,",
+				"          Order_Date,",
+				"          Posting_Date,",
+				"          Shipment_Date,",
+				"          Payment_Terms_Code,",
+				"          Ship_Info,",
+				"          Invoice_Info,",
+				"          Promised_Delivery_Date,",
+				"          Currency_Factor,",
+				"          Salesperson_Code,",
+				"          Responsibility_Center,",
+				"          Flag,",
+				"          Shipment_Flag",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
 			]
 		}
 	}
