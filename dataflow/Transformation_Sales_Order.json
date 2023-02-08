@@ -29,6 +29,9 @@
 				},
 				{
 					"name": "select2"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -59,7 +62,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source(output(",
-				"          {Document Type} as short,",
+				"          {Document Type} as integer,",
 				"          No_ as integer,",
 				"          {Sell-to Customer No_} as integer,",
 				"          {Ship-to Name} as string,",
@@ -110,9 +113,9 @@
 				"          Document_Type = {Document Type},",
 				"          Document_No = No_,",
 				"          Sell_To_Customer_No = {Sell-to Customer No_},",
-				"          {Order Date},",
-				"          {Posting Date},",
-				"          {Shipment Date},",
+				"          Order_Date = {Order Date},",
+				"          Posting_Date = {Posting Date},",
+				"          Shipment_Date = {Shipment Date},",
 				"          Payment_Terms_Code = {Payment Terms Code},",
 				"          Ship_Info = Ship,",
 				"          Invoice_Info = Invoice,",
@@ -122,7 +125,8 @@
 				"          Responsibility_Center = {Responsibility Center}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select2"
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 derive(Flag = 'Sales_Order') ~> derivedColumn2"
 			]
 		}
 	}
