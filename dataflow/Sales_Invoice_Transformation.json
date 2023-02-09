@@ -1,0 +1,126 @@
+{
+	"name": "Sales_Invoice_Transformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "sales_Invoice_Line",
+						"type": "DatasetReference"
+					},
+					"name": "InvoiceLine"
+				},
+				{
+					"dataset": {
+						"referenceName": "Sales_invoice_Header",
+						"type": "DatasetReference"
+					},
+					"name": "InvoiceHeader"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Document No_} as string,",
+				"          {Line No_} as string,",
+				"          Type as integer,",
+				"          No_ as string,",
+				"          {Location Code} as string,",
+				"          {Shipment Date} as string,",
+				"          Description as string,",
+				"          Quantity as float,",
+				"          {Unit Price} as float,",
+				"          {Unit Cost (LCY)} as float,",
+				"          {Line Discount _} as string,",
+				"          {Line Discount Amount} as string,",
+				"          Amount as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> InvoiceLine",
+				"source(output(",
+				"          No_ as string,",
+				"          {Sell-to Customer No_} as string,",
+				"          {Ship-to Name} as string,",
+				"          {Ship-to Address} as string,",
+				"          {Ship-to City} as string,",
+				"          {Order Date} as string,",
+				"          {Posting Date} as string,",
+				"          {Shipment Date} as string,",
+				"          {Payment Terms Code} as string,",
+				"          {Location Code} as string,",
+				"          {Currency Code} as string,",
+				"          {Currency Factor} as string,",
+				"          {Order No_} as string,",
+				"          {Sell-to Customer Name} as string,",
+				"          {Sell-to Address} as string,",
+				"          {Sell-to City} as string,",
+				"          {Sell-to Post Code} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> InvoiceHeader",
+				"InvoiceLine select(mapColumn(",
+				"          Invoice_No = {Document No_},",
+				"          Invoice_Line_No = {Line No_},",
+				"          Type,",
+				"          No = No_,",
+				"          Location_Code = {Location Code},",
+				"          Description,",
+				"          Quantity,",
+				"          Unit_Price = {Unit Price},",
+				"          {Unit_Cost_(LCY)} = {Unit Cost (LCY)},",
+				"          {Line_Discount %} = {Line Discount _},",
+				"          Line_Discount_Amount = {Line Discount Amount},",
+				"          Billing_Net_Amount = Amount",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"InvoiceHeader select(mapColumn(",
+				"          Invoice_No = No_,",
+				"          {Sell-To_Customer_No} = {Sell-to Customer No_},",
+				"          Payment_Terms_Code = {Payment Terms Code},",
+				"          Location_Code = {Location Code},",
+				"          Currency_Code = {Currency Code},",
+				"          Currency_Factor = {Currency Factor},",
+				"          Order_No = {Order No_},",
+				"          Order_Date = {Order Date},",
+				"          Posting_Date = {Posting Date},",
+				"          Shipment_Date = {Shipment Date}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 derive(Order_Date = toDate(Order_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          Link_Date = toDate(Posting_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          Invoice_Date = toDate(Posting_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          Shipment_Date = toDate(Shipment_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          Posting_Date = toDate(Posting_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          Flag = 'Sales_Invoice') ~> derivedColumn1",
+				"select1 derive(Billing_Net_Cost = (Quantity*{Unit_Cost_(LCY)})) ~> derivedColumn2",
+				"derivedColumn2, derivedColumn1 join(select1@Invoice_No == select2@Invoice_No,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1"
+			]
+		}
+	}
+}
