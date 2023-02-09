@@ -1,0 +1,116 @@
+{
+	"name": "CLE_DCLE Tranformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DCLE",
+						"type": "DatasetReference"
+					},
+					"name": "DCLE"
+				},
+				{
+					"dataset": {
+						"referenceName": "CLE",
+						"type": "DatasetReference"
+					},
+					"name": "CLE"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Entry No_} as integer,",
+				"          {Cust_ Ledger Entry No_} as string,",
+				"          {Entry Type} as integer,",
+				"          {Posting Date} as string,",
+				"          {Document No_} as string,",
+				"          {Amount (LCY)} as float,",
+				"          {User ID} as string,",
+				"          {Source Code} as string,",
+				"          {Transaction No_} as string,",
+				"          {Debit Amount} as float,",
+				"          {Credit Amount} as float",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DCLE",
+				"source(output(",
+				"          {Entry No_} as string,",
+				"          {Customer No_} as string,",
+				"          {Posting Date} as string,",
+				"          {Document Type} as string,",
+				"          {Document No_} as string,",
+				"          {Currency Code} as string,",
+				"          {Customer Posting Group} as string,",
+				"          {Salesperson Code} as string,",
+				"          {Document Date} as string,",
+				"          {Closed by Entry No_} as string,",
+				"          {Closed by Amount} as float",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CLE",
+				"DCLE select(mapColumn(",
+				"          DCLE_No = {Entry No_},",
+				"          CLE_No = {Cust_ Ledger Entry No_},",
+				"          Entry_Type = {Entry Type},",
+				"          Cust_Document_No = {Document No_},",
+				"          Remaining_Amount = {Amount (LCY)},",
+				"          User_ID = {User ID},",
+				"          {Source Code},",
+				"          Transaction_No = {Transaction No_},",
+				"          Debit_Amount = {Debit Amount},",
+				"          Credit_Amount = {Credit Amount}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"CLE select(mapColumn(",
+				"          CLE_No = {Entry No_},",
+				"          Link_Customer = {Customer No_},",
+				"          Posting_Date = {Posting Date},",
+				"          Document_Type = {Document Type},",
+				"          Document_No = {Document No_},",
+				"          Currency_Code = {Currency Code},",
+				"          Customer_Posting_Group = {Customer Posting Group},",
+				"          Salesperson_Code = {Salesperson Code},",
+				"          CLE_Booking_Date = {Document Date},",
+				"          {Closed_by Entry_No} = {Closed by Entry No_},",
+				"          Closed_by_Amount = {Closed by Amount}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select1 derive(Original_Amount = toString(iif(Entry_Type==1,(Remaining_Amount)))) ~> derivedColumn1",
+				"select2 derive(Flag = 'CLE',",
+				"          Link_Date = toDate(Posting_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          CLE_Posting_Date = toDate(Posting_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          Posting_Date = toDate(Posting_Date,'dd-MM-yyyy','yyyy-MM-dd'),",
+				"          CLE_Booking_Date = toDate(CLE_Booking_Date,'dd-MM-yyyy', 'yyyy-MM-dd')) ~> derivedColumn2",
+				"derivedColumn1, derivedColumn2 join(select1@CLE_No == select2@CLE_No,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1"
+			]
+		}
+	}
+}
